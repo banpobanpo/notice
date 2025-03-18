@@ -71,7 +71,34 @@
     </style>
 </head>
 <body>
+    <script>
+        const PASSWORD = "12345"; // 비밀번호 설정 (배포 시 변경 필요) 
+        const GITHUB_API_URL = "https://api.github.com/repos/banpobanpo/notice/contents/notices.json";  // 실제 파일 URL로 변경 필요
+        const GITHUB_TOKEN = "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";  // GitHub Personal Access Token 사용
+        
+        // 관리자 모드 닫기
+        function closeAdminPanel() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'none';
+        }
 
+        // 관리자 모드 열기
+        function openAdminPanel() {
+            document.getElementById('overlay').style.display = 'block'; 
+            document.getElementById('adminPanel').style.display = 'block'; 
+        }
+
+        // 비밀번호 확인
+        function checkPassword() {
+            const input = document.getElementById("password").value;
+            if (input === PASSWORD) {
+                document.getElementById("adminContent").style.display = "block";
+                loadNotices();
+            } else {
+                alert("비밀번호가 틀렸습니다.");
+            }
+        }
+    </script>
     <h1>📢 오늘의 공지</h1>
     <div id="content">공지 내용을 불러오는 중...</div>
 
@@ -140,34 +167,7 @@
         </div>
     </div>
 
-    <script defer>
-        const PASSWORD = "12345"; // 비밀번호 설정 (배포 시 변경 필요) 
-        const GITHUB_API_URL = "https://api.github.com/repos/banpobanpo/notice/contents/notices.json";  // 실제 파일 URL로 변경 필요
-        const GITHUB_TOKEN = "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";  // GitHub Personal Access Token 사용
-        
-        // 관리자 모드 닫기
-        function closeAdminPanel() {
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('adminPanel').style.display = 'none';
-        }
-
-        // 관리자 모드 열기
-        function openAdminPanel() {
-            document.getElementById('overlay').style.display = 'block'; 
-            document.getElementById('adminPanel').style.display = 'block'; 
-        }
-
-        // 비밀번호 확인
-        function checkPassword() {
-            const input = document.getElementById("password").value;
-            if (input === PASSWORD) {
-                document.getElementById("adminContent").style.display = "block";
-                loadNotices();
-            } else {
-                alert("비밀번호가 틀렸습니다.");
-            }
-        }
-
+    <script>
         // 공지 사항 불러오기
         function loadNotices() {
             fetch('https://raw.githubusercontent.com/banpobanpo/notice/main/notices.json') // 실제 파일 경로로 변경 필요
