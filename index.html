@@ -157,33 +157,29 @@
         function updateMainPage() {
             const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
             const today = new Date();
-            const currentHour = today.getHours();  // 현재 시간의 시(hour) 값을 가져옵니다.
-            
-            // 오늘 요일과 내일 요일을 계산합니다.
+            const currentHour = today.getHours();
             const todayStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()} (${days[today.getDay()]})`;
-            const tomorrowStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate() + 1} (${days[(today.getDay() + 1) % 7]})`;
-        
-            // 페이지 타이틀과 Open Graph 타이틀을 설정합니다.
+
             document.title = `[${todayStr} 공지]`;
             document.querySelector('meta[property="og:title"]').setAttribute("content", `[${todayStr} 공지]`);
-        
-            // 저장된 공지 불러오기
-            const notices = JSON.parse(localStorage.getItem("notices")) || {};
-        
-            // 15시 기준으로 공지를 보여줄 요일을 결정합니다.
-            let selectedDay = today.getDay(); // 기본적으로 오늘 요일을 선택
-            if (currentHour >= 15) {  // 만약 시간이 15시 이상이면 내일 요일의 공지를 보여줍니다.
-                selectedDay = (selectedDay + 1) % 7; // 내일 요일로 변경
-            }
-        
-            // 선택된 요일에 해당하는 공지 내용 불러오기
-            const todayNotice = notices[days[selectedDay]] || "오늘은 공지가 없습니다.";
-            
-            // 메인 화면에 공지 내용 출력
-            document.getElementById("content").innerHTML = todayNotice.replace(/\n/g, "<br>");
-        
-            // Open Graph 설명을 설정합니다.
-            document.querySelector('meta[property="og:description"]').setAttribute("content", todayNotice.replace(/\n/g, " "));
+
+            // GitHub Pages에서 JSON 파일 불러오기
+            fetch('https://your-username.github.io/your-repository/notices.json') // 실제 경로로 변경 필요
+                .then(response => response.json())
+                .then(notices => {
+                    let selectedDay = today.getDay();
+                    if (currentHour >= 15) {
+                        selectedDay = (selectedDay + 1) % 7; // 오후 3시가 지나면 내일 공지를 표시
+                    }
+
+                    const todayNotice = notices[days[selectedDay]] || "오늘은 공지가 없습니다.";
+                    document.getElementById("content").innerHTML = todayNotice.replace(/\n/g, "<br>");
+                    document.querySelector('meta[property="og:description"]').setAttribute("content", todayNotice.replace(/\n/g, " "));
+                })
+                .catch(error => {
+                    console.error('공지 사항을 불러오는 중 오류가 발생했습니다.', error);
+                    document.getElementById("content").innerHTML = "공지 사항을 불러오는 중 오류가 발생했습니다.";
+                });
         }
 
         
