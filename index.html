@@ -109,7 +109,7 @@
     </div>
 
     <script>
-        const PASSWORD = "asdfasdfasdf"; // 비밀번호 설정 (배포 시 변경 필요)
+        const PASSWORD = "1234"; // 비밀번호 설정 (배포 시 변경 필요) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         function openAdminPanel() {
             document.getElementById('overlay').style.display = 'block'; 
@@ -157,30 +157,40 @@
         function updateMainPage() {
             const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
             const today = new Date();
-            const currentTime = today.getHours() * 60 + today.getMinutes(); 
-
-            let todayNotice = "오늘은 공지가 없습니다.";
-            const notices = JSON.parse(localStorage.getItem("notices")) || {};
-
+            const currentTime = today.getHours() * 60 + today.getMinutes();  // 현재 시간을 분 단위로 계산
+        
+            // 요일별 공지 시간 설정 (3시 ~ 3시)
             const schedule = {
-                "월요일": { start: 0 * 24 * 60 + 15 * 60, end: 1 * 24 * 60 + 15 * 60 },
+                "월요일": { start: 0 * 24 * 60 + 15 * 60, end: 1 * 24 * 60 + 15 * 60 }, // 월요일 3시부터 3시까지
                 "화요일": { start: 1 * 24 * 60 + 15 * 60, end: 2 * 24 * 60 + 15 * 60 },
                 "수요일": { start: 2 * 24 * 60 + 15 * 60, end: 3 * 24 * 60 + 15 * 60 },
                 "목요일": { start: 3 * 24 * 60 + 15 * 60, end: 4 * 24 * 60 + 15 * 60 },
                 "금요일": { start: 4 * 24 * 60 + 15 * 60, end: 5 * 24 * 60 + 15 * 60 }
             };
-
-            const dayOfWeek = days[today.getDay() + 1]; 
-            const daySchedule = schedule[dayOfWeek];
-
+        
+            const dayOfWeek = days[today.getDay() + 1];  // 오늘 요일
+            const daySchedule = schedule[dayOfWeek];  // 해당 요일의 시간대 정보
+        
+            // 저장된 공지 불러오기
+            const notices = JSON.parse(localStorage.getItem("notices")) || {};
+            let todayNotice = "오늘은 공지가 없습니다.";  // 기본 공지 내용
+        
+            // 공지 시간 범위 내에 있는지 체크
             if (daySchedule && currentTime >= daySchedule.start && currentTime <= daySchedule.end) {
-                todayNotice = notices[dayOfWeek] || todayNotice;
+                todayNotice = notices[dayOfWeek] || todayNotice;  // 해당 요일에 저장된 공지가 있으면 표시
             }
-
-            document.getElementById('content').innerHTML = todayNotice;
+        
+            document.getElementById('content').innerHTML = todayNotice;  // 메인 화면에 공지 표시
+        
+            // Open Graph 설정 (Meta 태그 업데이트)
+            document.querySelector('meta[property="og:title"]').setAttribute("content", `[${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}] ${dayOfWeek} 공지`);
+            document.querySelector('meta[property="og:description"]').setAttribute("content", todayNotice.replace(/\n/g, " "));
         }
-
-        window.onload = updateMainPage;
+        
+        // 페이지 로드 시 공지 업데이트
+        window.onload = function() {
+            updateMainPage();
+        };
     </script>
 </body>
 </html>
