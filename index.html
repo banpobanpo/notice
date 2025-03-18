@@ -273,7 +273,7 @@
             document.title = `[${todayStr} 공지]`;
             document.querySelector('meta[property="og:title"]').setAttribute("content", `[${todayStr} 공지]`);
 
-            fetch('https://your-username.github.io/your-repository/notices.json')
+            fetch('https://banpobanpo.github.io/notice/notices.json')
                 .then(response => response.json())
                 .then(notices => {
                     let selectedDay = today.getDay();
