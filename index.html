@@ -167,19 +167,20 @@
                 "목요일": document.getElementById("thu").value,
                 "금요일": document.getElementById("fri").value
             };
-
+        
             // GitHub API를 통해 JSON 파일 수정
             saveNoticesToGitHub(notices);
-
+        
             alert("공지 내용이 저장되었습니다.");
             closeAdminPanel(); 
             updateMainPage(); 
         }
-
+        
         // GitHub에 공지 내용 저장
         function saveNoticesToGitHub(notices) {
-            const encodedContent = btoa(JSON.stringify(notices));  // JSON을 base64로 인코딩
-
+            const jsonContent = JSON.stringify(notices);  // 객체를 JSON 문자열로 변환
+            const encodedContent = btoa(jsonContent);     // JSON 문자열을 base64로 인코딩
+        
             fetch(GITHUB_API_URL, {
                 method: 'GET',
                 headers: {
@@ -190,7 +191,7 @@
             .then(response => response.json())
             .then(data => {
                 const sha = data.sha;
-
+        
                 fetch(GITHUB_API_URL, {
                     method: 'PUT',
                     headers: {
@@ -211,6 +212,7 @@
             })
             .catch(error => console.error("GitHub API에서 파일을 가져오는 중 오류가 발생했습니다.", error));
         }
+
 
         // 페이지 로드 시 공지 업데이트
         function updateMainPage() {
