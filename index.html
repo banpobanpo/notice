@@ -88,18 +88,23 @@
         <div id="adminContent" style="display: none;">
             <h3>📢 공지 수정</h3>
 
+            <!-- 월요일 -->
             <label>월요일</label>
             <textarea id="mon"></textarea>
 
+            <!-- 화요일 -->
             <label>화요일</label>
             <textarea id="tue"></textarea>
 
+            <!-- 수요일 -->
             <label>수요일</label>
             <textarea id="wed"></textarea>
 
+            <!-- 목요일 -->
             <label>목요일</label>
             <textarea id="thu"></textarea>
 
+            <!-- 금요일 -->
             <label>금요일</label>
             <textarea id="fri"></textarea>
 
@@ -110,17 +115,22 @@
 
     <script>
         const PASSWORD = "1414"; // 비밀번호 설정 (배포 시 변경 필요) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        const GITHUB_API_URL = "https://api.github.com/repos/yourUsername/yourRepo/contents/notices.json";  // 실제 파일 URL로 변경 필요
+        const GITHUB_TOKEN = "yourGitHubToken";  // GitHub Personal Access Token 사용
 
+        // 관리자 모드 열기
         function openAdminPanel() {
             document.getElementById('overlay').style.display = 'block'; 
             document.getElementById('adminPanel').style.display = 'block'; 
         }
 
+        // 관리자 모드 닫기
         function closeAdminPanel() {
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('adminPanel').style.display = 'none';
         }
 
+        // 비밀번호 확인
         function checkPassword() {
             const input = document.getElementById("password").value;
             if (input === PASSWORD) {
@@ -131,15 +141,24 @@
             }
         }
 
+        // GitHub에서 공지 사항 불러오기
         function loadNotices() {
-            const notices = JSON.parse(localStorage.getItem("notices")) || {};
-            document.getElementById("mon").value = notices["월요일"] || "";
-            document.getElementById("tue").value = notices["화요일"] || "";
-            document.getElementById("wed").value = notices["수요일"] || "";
-            document.getElementById("thu").value = notices["목요일"] || "";
-            document.getElementById("fri").value = notices["금요일"] || "";
+            fetch('https://raw.githubusercontent.com/yourUsername/yourRepo/main/notices.json') // 실제 파일 경로로 변경 필요
+                .then(response => response.json())
+                .then(notices => {
+                    document.getElementById("mon").value = notices["월요일"] || "";
+                    document.getElementById("tue").value = notices["화요일"] || "";
+                    document.getElementById("wed").value = notices["수요일"] || "";
+                    document.getElementById("thu").value = notices["목요일"] || "";
+                    document.getElementById("fri").value = notices["금요일"] || "";
+                })
+                .catch(error => {
+                    console.error('공지 사항을 불러오는 중 오류가 발생했습니다.', error);
+                    alert("공지 사항을 불러오는 중 오류가 발생했습니다.");
+                });
         }
 
+        // 공지 사항 저장하기
         function saveNotices() {
             const notices = {
                 "월요일": document.getElementById("mon").value,
@@ -148,41 +167,71 @@
                 "목요일": document.getElementById("thu").value,
                 "금요일": document.getElementById("fri").value
             };
-            localStorage.setItem("notices", JSON.stringify(notices));
+
+            // GitHub API를 통해 JSON 파일 수정
+            saveNoticesToGitHub(notices);
+
             alert("공지 내용이 저장되었습니다.");
             closeAdminPanel(); 
             updateMainPage(); 
         }
 
-        function updateMainPage() {
-            const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
-            const today = new Date();
-            const currentHour = today.getHours();
-            const todayStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()} (${days[today.getDay()]})`;
+        // GitHub에 공지 내용 저장
+        function saveNoticesToGitHub(notices) {
+            const encodedContent = btoa(JSON.stringify(notices));  // JSON을 base64로 인코딩
 
-            document.title = `[${todayStr} 공지]`;
-            document.querySelector('meta[property="og:title"]').setAttribute("content", `[${todayStr} 공지]`);
+            fetch(GITHUB_API_URL, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `token ${GITHUB_TOKEN}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const sha = data.sha;
 
-            // GitHub Pages에서 JSON 파일 불러오기
-            fetch('https://your-username.github.io/your-repository/notices.json') // 실제 경로로 변경 필요
-                .then(response => response.json())
-                .then(notices => {
-                    let selectedDay = today.getDay();
-                    if (currentHour >= 15) {
-                        selectedDay = (selectedDay + 1) % 7; // 오후 3시가 지나면 내일 공지를 표시
-                    }
-
-                    const todayNotice = notices[days[selectedDay]] || "오늘은 공지가 없습니다.";
-                    document.getElementById("content").innerHTML = todayNotice.replace(/\n/g, "<br>");
-                    document.querySelector('meta[property="og:description"]').setAttribute("content", todayNotice.replace(/\n/g, " "));
+                fetch(GITHUB_API_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: "공지사항 업데이트",
+                        content: encodedContent,
+                        sha: sha  // 현재 파일의 SHA 값
+                    })
                 })
-                .catch(error => {
-                    console.error('공지 사항을 불러오는 중 오류가 발생했습니다.', error);
-                    document.getElementById("content").innerHTML = "공지 사항을 불러오는 중 오류가 발생했습니다.";
-                });
+                .then(response => response.json())
+                .then(data => {
+                    console.log("GitHub에 파일이 저장되었습니다", data);
+                })
+                .catch(error => console.error("GitHub API 에러:", error));
+            })
+            .catch(error => console.error("GitHub API에서 파일을 가져오는 중 오류가 발생했습니다.", error));
         }
 
-        
+        // 페이지 로드 시 공지 업데이트
+        function updateMainPage() {
+            fetch('https://raw.githubusercontent.com/yourUsername/yourRepo/main/notices.json')
+                .then(response => response.json())
+                .then(data => {
+                    const today = new Date().getDay();
+                    const dayNames = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일"];
+                    const todayNotice = data[dayNames[today]] || {};
+
+                    const contentDiv = document.getElementById("content");
+                    contentDiv.innerHTML = `
+                        <h2>${dayNames[today]} 공지</h2>
+                        <p>[1교시] 창체진로: ${todayNotice["1교시"] || ''}</p>
+                        <p>[4교시] 확통: ${todayNotice["4교시"] || ''}</p>
+                        <p>[6교시] 심영독: ${todayNotice["6교시"] || ''}</p>
+                    `;
+                })
+                .catch(error => console.error("JSON 파일 로딩 실패:", error));
+        }
+
         // 페이지 로드 시 공지 업데이트
         window.onload = function() {
             updateMainPage();
