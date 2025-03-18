@@ -233,6 +233,76 @@
                 }
             });
         }
+            // GitHub에 공지 내용 저장
+        function saveNoticesToGitHub(notices) {
+            const jsonContent = JSON.stringify(notices);  // 객체를 JSON 문자열로 변환
+            const encodedContent = btoa(jsonContent);     // JSON 문자열을 base64로 인코딩
+        
+            fetch(GITHUB_API_URL, {
+                method: 'GET',
+                headers: {
+                    'Authorization': token ${GITHUB_TOKEN},
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const sha = data.sha;
+        
+                fetch(GITHUB_API_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': token ${GITHUB_TOKEN},
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: "공지사항 업데이트",
+                        content: encodedContent,
+                        sha: sha  // 현재 파일의 SHA 값
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("GitHub에 파일이 저장되었습니다", data);
+                })
+                .catch(error => console.error("GitHub API 에러:", error));
+            })
+            .catch(error => console.error("GitHub API에서 파일을 가져오는 중 오류가 발생했습니다.", error));
+        }
+
+
+        // 페이지 로드 시 공지 업데이트
+        function updateMainPage() {
+            const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+            const today = new Date();
+            const currentHour = today.getHours();
+            const todayStr = ${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()} (${days[today.getDay()]});
+
+            document.title = [${todayStr} 공지];
+            document.querySelector('meta[property="og:title"]').setAttribute("content", [${todayStr} 공지]);
+
+            fetch('https://banpobanpo.github.io/notice/notices.json')
+                .then(response => response.json())
+                .then(notices => {
+                    let selectedDay = today.getDay();
+                    if (currentHour >= 15) {
+                        selectedDay = (selectedDay + 1) % 7; // 오후 3시가 지나면 내일 공지를 표시
+                    }
+
+                    const todayNotice = notices[days[selectedDay]] || "오늘은 공지가 없습니다.";
+                    document.getElementById("content").innerHTML = todayNotice.replace(/\n/g, "<br>");
+                    document.querySelector('meta[property="og:description"]').setAttribute("content", todayNotice.replace(/\n/g, " "));
+                })
+                .catch(error => {
+                    console.error('공지 사항을 불러오는 중 오류가 발생했습니다.', error);
+                    document.getElementById("content").innerHTML = "공지 사항을 불러오는 중 오류가 발생했습니다.";
+                });
+        }
+
+        // 페이지 로드 시 공지 업데이트
+        window.onload = function() {
+            updateMainPage();
+        };
     </script>
 </body>
 </html>
