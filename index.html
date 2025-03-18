@@ -144,17 +144,17 @@
         const PASSWORD = "12345"; // 비밀번호 설정 (배포 시 변경 필요) 
         const GITHUB_API_URL = "https://api.github.com/repos/banpobanpo/notice/contents/notices.json";  // 실제 파일 URL로 변경 필요
         const GITHUB_TOKEN = "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";  // GitHub Personal Access Token 사용
+        
+        // 관리자 모드 닫기
+        function closeAdminPanel() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'none';
+        }
 
         // 관리자 모드 열기
         function openAdminPanel() {
             document.getElementById('overlay').style.display = 'block'; 
             document.getElementById('adminPanel').style.display = 'block'; 
-        }
-
-        // 관리자 모드 닫기
-        function closeAdminPanel() {
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('adminPanel').style.display = 'none';
         }
 
         // 비밀번호 확인
@@ -304,5 +304,6 @@
             updateMainPage();
         };
     </script>
+
 </body>
 </html>
