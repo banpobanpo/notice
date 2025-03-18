@@ -157,35 +157,35 @@
         function updateMainPage() {
             const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
             const today = new Date();
-            const currentTime = today.getHours() * 60 + today.getMinutes();  // 현재 시간을 분 단위로 계산
+            const currentHour = today.getHours();  // 현재 시간의 시(hour) 값을 가져옵니다.
+            
+            // 오늘 요일과 내일 요일을 계산합니다.
+            const todayStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()} (${days[today.getDay()]})`;
+            const tomorrowStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate() + 1} (${days[(today.getDay() + 1) % 7]})`;
         
-            // 요일별 공지 시간 설정 (3시 ~ 3시)
-            const schedule = {
-                "월요일": { start: 0 * 24 * 60 + 15 * 60, end: 1 * 24 * 60 + 15 * 60 }, // 월요일 3시부터 3시까지
-                "화요일": { start: 1 * 24 * 60 + 15 * 60, end: 2 * 24 * 60 + 15 * 60 },
-                "수요일": { start: 2 * 24 * 60 + 15 * 60, end: 3 * 24 * 60 + 15 * 60 },
-                "목요일": { start: 3 * 24 * 60 + 15 * 60, end: 4 * 24 * 60 + 15 * 60 },
-                "금요일": { start: 4 * 24 * 60 + 15 * 60, end: 5 * 24 * 60 + 15 * 60 }
-            };
-        
-            const dayOfWeek = days[today.getDay() + 1];  // 오늘 요일
-            const daySchedule = schedule[dayOfWeek];  // 해당 요일의 시간대 정보
+            // 페이지 타이틀과 Open Graph 타이틀을 설정합니다.
+            document.title = `[${todayStr} 공지]`;
+            document.querySelector('meta[property="og:title"]').setAttribute("content", `[${todayStr} 공지]`);
         
             // 저장된 공지 불러오기
             const notices = JSON.parse(localStorage.getItem("notices")) || {};
-            let todayNotice = "오늘은 공지가 없습니다.";  // 기본 공지 내용
         
-            // 공지 시간 범위 내에 있는지 체크
-            if (daySchedule && currentTime >= daySchedule.start && currentTime <= daySchedule.end) {
-                todayNotice = notices[dayOfWeek] || todayNotice;  // 해당 요일에 저장된 공지가 있으면 표시
+            // 15시 기준으로 공지를 보여줄 요일을 결정합니다.
+            let selectedDay = today.getDay(); // 기본적으로 오늘 요일을 선택
+            if (currentHour >= 15) {  // 만약 시간이 15시 이상이면 내일 요일의 공지를 보여줍니다.
+                selectedDay = (selectedDay + 1) % 7; // 내일 요일로 변경
             }
         
-            document.getElementById('content').innerHTML = todayNotice;  // 메인 화면에 공지 표시
+            // 선택된 요일에 해당하는 공지 내용 불러오기
+            const todayNotice = notices[days[selectedDay]] || "오늘은 공지가 없습니다.";
+            
+            // 메인 화면에 공지 내용 출력
+            document.getElementById("content").innerHTML = todayNotice.replace(/\n/g, "<br>");
         
-            // Open Graph 설정 (Meta 태그 업데이트)
-            document.querySelector('meta[property="og:title"]').setAttribute("content", `[${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}] ${dayOfWeek} 공지`);
+            // Open Graph 설명을 설정합니다.
             document.querySelector('meta[property="og:description"]').setAttribute("content", todayNotice.replace(/\n/g, " "));
         }
+
         
         // 페이지 로드 시 공지 업데이트
         window.onload = function() {
