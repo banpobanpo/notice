@@ -98,76 +98,6 @@
                 alert("비밀번호가 틀렸습니다.");
             }
         }
-    </script>
-    <h1>📢 오늘의 공지</h1>
-    <div id="content">공지 내용을 불러오는 중...</div>
-
-    <button onclick="openAdminPanel()">관리자 모드</button>
-
-    <div class="overlay" id="overlay"></div>
-
-    <div class="popup" id="adminPanel">
-        <h2>🔑 관리자 모드</h2>
-        <label for="password">비밀번호를 입력하세요:</label>
-        <input type="password" id="password">
-        <button onclick="checkPassword()">로그인</button>
-
-        <div id="adminContent" style="display: none;">
-            <h3>📢 공지 수정</h3>
-
-            <!-- 월요일 -->
-            <h4>월요일</h4>
-            <label>[1교시] 창체진로:</label>
-            <input type="text" id="mon1" placeholder="입력해 주세요">
-            <label>[4교시] 확통:</label>
-            <input type="text" id="mon2" placeholder="입력해 주세요">
-            <label>[6교시] 심영독:</label>
-            <input type="text" id="mon3" placeholder="입력해 주세요">
-
-            <!-- 화요일 -->
-            <h4>화요일</h4>
-            <label>[2교시] 체육:</label>
-            <input type="text" id="tue1" placeholder="입력해 주세요">
-            <label>[5교시] 인공지능기초:</label>
-            <input type="text" id="tue2" placeholder="입력해 주세요">
-            <label>[7교시] 독서:</label>
-            <input type="text" id="tue3" placeholder="입력해 주세요">
-
-            <!-- 수요일 -->
-            <h4>수요일</h4>
-            <label>[1교시] 독서:</label>
-            <input type="text" id="wed1" placeholder="입력해 주세요">
-            <label>[2교시] 진로와직업:</label>
-            <input type="text" id="wed2" placeholder="입력해 주세요">
-            <label>[5교시] 확통:</label>
-            <input type="text" id="wed3" placeholder="입력해 주세요">
-            <label>[6~7교시] 창체:</label>
-            <input type="text" id="wed4" placeholder="입력해 주세요">
-
-            <!-- 목요일 -->
-            <h4>목요일</h4>
-            <label>[3교시] 인공지능기초:</label>
-            <input type="text" id="thu1" placeholder="입력해 주세요">
-            <label>[4교시] 음감비/미감비:</label>
-            <input type="text" id="thu2" placeholder="입력해 주세요">
-            <label>[5교시] 심영독:</label>
-            <input type="text" id="thu3" placeholder="입력해 주세요">
-
-            <!-- 금요일 -->
-            <h4>금요일</h4>
-            <label>[2교시] 독서:</label>
-            <input type="text" id="fri1" placeholder="입력해 주세요">
-            <label>[4교시] 확통:</label>
-            <input type="text" id="fri2" placeholder="입력해 주세요">
-            <label>[6교시] 심영독:</label>
-            <input type="text" id="fri3" placeholder="입력해 주세요">
-
-            <button onclick="saveNotices()">저장</button>
-            <button class="close-btn" onclick="closeAdminPanel()">닫기</button>
-        </div>
-    </div>
-
-    <script>
         // 공지 사항 불러오기
         function loadNotices() {
             fetch('https://raw.githubusercontent.com/banpobanpo/notice/main/notices.json') // 실제 파일 경로로 변경 필요
@@ -304,6 +234,73 @@
             updateMainPage();
         };
     </script>
+    <h1>📢 오늘의 공지</h1>
+    <div id="content">공지 내용을 불러오는 중...</div>
+
+    <button onclick="openAdminPanel()">관리자 모드</button>
+
+    <div class="overlay" id="overlay"></div>
+
+    <div class="popup" id="adminPanel">
+        <h2>🔑 관리자 모드</h2>
+        <label for="password">비밀번호를 입력하세요:</label>
+        <input type="password" id="password">
+        <button onclick="checkPassword()">로그인</button>
+
+        <div id="adminContent" style="display: none;">
+            <h3>📢 공지 수정</h3>
+
+            <!-- 월요일 -->
+            <h4>월요일</h4>
+            <label>[1교시] 창체진로:</label>
+            <input type="text" id="mon1" placeholder="입력해 주세요">
+            <label>[4교시] 확통:</label>
+            <input type="text" id="mon2" placeholder="입력해 주세요">
+            <label>[6교시] 심영독:</label>
+            <input type="text" id="mon3" placeholder="입력해 주세요">
+
+            <!-- 화요일 -->
+            <h4>화요일</h4>
+            <label>[2교시] 체육:</label>
+            <input type="text" id="tue1" placeholder="입력해 주세요">
+            <label>[5교시] 인공지능기초:</label>
+            <input type="text" id="tue2" placeholder="입력해 주세요">
+            <label>[7교시] 독서:</label>
+            <input type="text" id="tue3" placeholder="입력해 주세요">
+
+            <!-- 수요일 -->
+            <h4>수요일</h4>
+            <label>[1교시] 독서:</label>
+            <input type="text" id="wed1" placeholder="입력해 주세요">
+            <label>[2교시] 진로와직업:</label>
+            <input type="text" id="wed2" placeholder="입력해 주세요">
+            <label>[5교시] 확통:</label>
+            <input type="text" id="wed3" placeholder="입력해 주세요">
+            <label>[6~7교시] 창체:</label>
+            <input type="text" id="wed4" placeholder="입력해 주세요">
+
+            <!-- 목요일 -->
+            <h4>목요일</h4>
+            <label>[3교시] 인공지능기초:</label>
+            <input type="text" id="thu1" placeholder="입력해 주세요">
+            <label>[4교시] 음감비/미감비:</label>
+            <input type="text" id="thu2" placeholder="입력해 주세요">
+            <label>[5교시] 심영독:</label>
+            <input type="text" id="thu3" placeholder="입력해 주세요">
+
+            <!-- 금요일 -->
+            <h4>금요일</h4>
+            <label>[2교시] 독서:</label>
+            <input type="text" id="fri1" placeholder="입력해 주세요">
+            <label>[4교시] 확통:</label>
+            <input type="text" id="fri2" placeholder="입력해 주세요">
+            <label>[6교시] 심영독:</label>
+            <input type="text" id="fri3" placeholder="입력해 주세요">
+
+            <button onclick="saveNotices()">저장</button>
+            <button class="close-btn" onclick="closeAdminPanel()">닫기</button>
+        </div>
+    </div>
 
 </body>
 </html>
