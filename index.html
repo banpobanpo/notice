@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>일일 공지</title>
 
-    <!-- Open Graph 메타 태그 -->
     <meta property="og:title" content="공지">
     <meta property="og:description" content="공지 내용을 불러오는 중...">
     <meta property="og:type" content="website">
@@ -33,7 +32,6 @@
             color: white;
             cursor: pointer;
         }
-        /* 팝업 스타일 */
         .popup {
             display: none;
             position: fixed;
@@ -60,7 +58,6 @@
         .popup .close-btn {
             background: #dc3545;
         }
-        /* 배경 흐리게 처리 */
         .overlay {
             display: none;
             position: fixed;
@@ -80,10 +77,8 @@
 
     <button onclick="openAdminPanel()">관리자 모드</button>
 
-    <!-- 팝업 배경 (overlay) -->
     <div class="overlay" id="overlay"></div>
 
-    <!-- 관리자 모드 팝업 -->
     <div class="popup" id="adminPanel">
         <h2>🔑 관리자 모드</h2>
         <label for="password">비밀번호를 입력하세요:</label>
@@ -93,7 +88,6 @@
         <div id="adminContent" style="display: none;">
             <h3>📢 공지 수정</h3>
 
-            <!-- 요일별 공지 수정 입력 양식 -->
             <label>월요일</label>
             <textarea id="mon"></textarea>
 
@@ -118,8 +112,8 @@
         const PASSWORD = "admin123"; // 비밀번호 설정 (배포 시 변경 필요)
 
         function openAdminPanel() {
-            document.getElementById('overlay').style.display = 'block'; // 배경 흐리게 처리
-            document.getElementById('adminPanel').style.display = 'block'; // 팝업 창 표시
+            document.getElementById('overlay').style.display = 'block'; 
+            document.getElementById('adminPanel').style.display = 'block'; 
         }
 
         function closeAdminPanel() {
@@ -156,36 +150,33 @@
             };
             localStorage.setItem("notices", JSON.stringify(notices));
             alert("공지 내용이 저장되었습니다.");
-            closeAdminPanel(); // 관리자 모드 종료
-            updateMainPage(); // 메인 페이지 업데이트
+            closeAdminPanel(); 
+            updateMainPage(); 
         }
 
         function updateMainPage() {
             const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
             const today = new Date();
-            const currentTime = today.getHours() * 60 + today.getMinutes(); // 현재 시간을 분 단위로 계산
+            const currentTime = today.getHours() * 60 + today.getMinutes(); 
 
             let todayNotice = "오늘은 공지가 없습니다.";
             const notices = JSON.parse(localStorage.getItem("notices")) || {};
 
-            // 각 요일별 공지가 표시되는 시간을 설정
             const schedule = {
-                "월요일": { start: 0 * 24 * 60 + 15 * 60, end: 1 * 24 * 60 + 15 * 60 }, // 금요일 오후 3시 ~ 월요일 오후 3시
-                "화요일": { start: 1 * 24 * 60 + 15 * 60, end: 2 * 24 * 60 + 15 * 60 }, // 월요일 오후 3시 ~ 화요일 오후 3시
-                "수요일": { start: 2 * 24 * 60 + 15 * 60, end: 3 * 24 * 60 + 15 * 60 }, // 화요일 오후 3시 ~ 수요일 오후 3시
-                "목요일": { start: 3 * 24 * 60 + 15 * 60, end: 4 * 24 * 60 + 15 * 60 }, // 수요일 오후 3시 ~ 목요일 오후 3시
-                "금요일": { start: 4 * 24 * 60 + 15 * 60, end: 5 * 24 * 60 + 15 * 60 }  // 목요일 오후 3시 ~ 금요일 오후 3시
+                "월요일": { start: 0 * 24 * 60 + 15 * 60, end: 1 * 24 * 60 + 15 * 60 },
+                "화요일": { start: 1 * 24 * 60 + 15 * 60, end: 2 * 24 * 60 + 15 * 60 },
+                "수요일": { start: 2 * 24 * 60 + 15 * 60, end: 3 * 24 * 60 + 15 * 60 },
+                "목요일": { start: 3 * 24 * 60 + 15 * 60, end: 4 * 24 * 60 + 15 * 60 },
+                "금요일": { start: 4 * 24 * 60 + 15 * 60, end: 5 * 24 * 60 + 15 * 60 }
             };
 
-            const dayOfWeek = days[today.getDay() + 1]; // 오늘 요일
+            const dayOfWeek = days[today.getDay() + 1]; 
             const daySchedule = schedule[dayOfWeek];
 
-            // 공지가 표시되는 시간 범위 내에 있는지 확인
             if (daySchedule && currentTime >= daySchedule.start && currentTime <= daySchedule.end) {
                 todayNotice = notices[dayOfWeek] || todayNotice;
             }
 
-            // 메인 페이지에 공지 내용 업데이트
             document.getElementById('content').innerHTML = todayNotice;
         }
 
