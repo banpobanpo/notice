@@ -88,20 +88,52 @@
         <div id="adminContent" style="display: none;">
             <h3>📢 공지 수정</h3>
 
-            <label>월요일</label>
-            <textarea id="mon"></textarea>
+            <!-- 월요일 -->
+            <h4>월요일</h4>
+            <label>[1교시] 창체진로:</label>
+            <input type="text" id="mon1" placeholder="입력해 주세요">
+            <label>[4교시] 확통:</label>
+            <input type="text" id="mon2" placeholder="입력해 주세요">
+            <label>[6교시] 심영독:</label>
+            <input type="text" id="mon3" placeholder="입력해 주세요">
 
-            <label>화요일</label>
-            <textarea id="tue"></textarea>
+            <!-- 화요일 -->
+            <h4>화요일</h4>
+            <label>[2교시] 체육:</label>
+            <input type="text" id="tue1" placeholder="입력해 주세요">
+            <label>[5교시] 인공지능기초:</label>
+            <input type="text" id="tue2" placeholder="입력해 주세요">
+            <label>[7교시] 독서:</label>
+            <input type="text" id="tue3" placeholder="입력해 주세요">
 
-            <label>수요일</label>
-            <textarea id="wed"></textarea>
+            <!-- 수요일 -->
+            <h4>수요일</h4>
+            <label>[1교시] 독서:</label>
+            <input type="text" id="wed1" placeholder="입력해 주세요">
+            <label>[2교시] 진로와직업:</label>
+            <input type="text" id="wed2" placeholder="입력해 주세요">
+            <label>[5교시] 확통:</label>
+            <input type="text" id="wed3" placeholder="입력해 주세요">
+            <label>[6~7교시] 창체:</label>
+            <input type="text" id="wed4" placeholder="입력해 주세요">
 
-            <label>목요일</label>
-            <textarea id="thu"></textarea>
+            <!-- 목요일 -->
+            <h4>목요일</h4>
+            <label>[3교시] 인공지능기초:</label>
+            <input type="text" id="thu1" placeholder="입력해 주세요">
+            <label>[4교시] 음감비/미감비:</label>
+            <input type="text" id="thu2" placeholder="입력해 주세요">
+            <label>[5교시] 심영독:</label>
+            <input type="text" id="thu3" placeholder="입력해 주세요">
 
-            <label>금요일</label>
-            <textarea id="fri"></textarea>
+            <!-- 금요일 -->
+            <h4>금요일</h4>
+            <label>[2교시] 독서:</label>
+            <input type="text" id="fri1" placeholder="입력해 주세요">
+            <label>[4교시] 확통:</label>
+            <input type="text" id="fri2" placeholder="입력해 주세요">
+            <label>[6교시] 심영독:</label>
+            <input type="text" id="fri3" placeholder="입력해 주세요">
 
             <button onclick="saveNotices()">저장</button>
             <button class="close-btn" onclick="closeAdminPanel()">닫기</button>
@@ -133,59 +165,69 @@
 
         function loadNotices() {
             const notices = JSON.parse(localStorage.getItem("notices")) || {};
-            document.getElementById("mon").value = notices["월요일"] || "";
-            document.getElementById("tue").value = notices["화요일"] || "";
-            document.getElementById("wed").value = notices["수요일"] || "";
-            document.getElementById("thu").value = notices["목요일"] || "";
-            document.getElementById("fri").value = notices["금요일"] || "";
+            document.getElementById("mon1").value = notices["월요일1"] || "";
+            document.getElementById("mon2").value = notices["월요일2"] || "";
+            document.getElementById("mon3").value = notices["월요일3"] || "";
+            document.getElementById("tue1").value = notices["화요일1"] || "";
+            document.getElementById("tue2").value = notices["화요일2"] || "";
+            document.getElementById("tue3").value = notices["화요일3"] || "";
+            document.getElementById("wed1").value = notices["수요일1"] || "";
+            document.getElementById("wed2").value = notices["수요일2"] || "";
+            document.getElementById("wed3").value = notices["수요일3"] || "";
+            document.getElementById("wed4").value = notices["수요일4"] || "";
+            document.getElementById("thu1").value = notices["목요일1"] || "";
+            document.getElementById("thu2").value = notices["목요일2"] || "";
+            document.getElementById("thu3").value = notices["목요일3"] || "";
+            document.getElementById("fri1").value = notices["금요일1"] || "";
+            document.getElementById("fri2").value = notices["금요일2"] || "";
+            document.getElementById("fri3").value = notices["금요일3"] || "";
         }
 
         function saveNotices() {
             const notices = {
-                "월요일": document.getElementById("mon").value,
-                "화요일": document.getElementById("tue").value,
-                "수요일": document.getElementById("wed").value,
-                "목요일": document.getElementById("thu").value,
-                "금요일": document.getElementById("fri").value
+                "월요일1": document.getElementById("mon1").value,
+                "월요일2": document.getElementById("mon2").value,
+                "월요일3": document.getElementById("mon3").value,
+                "화요일1": document.getElementById("tue1").value,
+                "화요일2": document.getElementById("tue2").value,
+                "화요일3": document.getElementById("tue3").value,
+                "수요일1": document.getElementById("wed1").value,
+                "수요일2": document.getElementById("wed2").value,
+                "수요일3": document.getElementById("wed3").value,
+                "수요일4": document.getElementById("wed4").value,
+                "목요일1": document.getElementById("thu1").value,
+                "목요일2": document.getElementById("thu2").value,
+                "목요일3": document.getElementById("thu3").value,
+                "금요일1": document.getElementById("fri1").value,
+                "금요일2": document.getElementById("fri2").value,
+                "금요일3": document.getElementById("fri3").value
             };
+
             localStorage.setItem("notices", JSON.stringify(notices));
             alert("공지 내용이 저장되었습니다.");
             closeAdminPanel(); 
-            updateMainPage(); 
+            updateMainPage();
         }
 
         function updateMainPage() {
-            const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+            const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일"];
+            const notices = JSON.parse(localStorage.getItem("notices")) || {};
+
             const today = new Date();
-            const currentHour = today.getHours();
-            const todayStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()} (${days[today.getDay()]})`;
+            const dayOfWeek = today.getDay();
+            const noticeToday = days[dayOfWeek];
 
-            document.title = `[${todayStr} 공지]`;
-            document.querySelector('meta[property="og:title"]').setAttribute("content", `[${todayStr} 공지]`);
-
-            // GitHub Pages에서 JSON 파일 불러오기
-            fetch('https://banpobanpo.github.io/notice/notices.json') // 실제 경로로 변경 필요
-                .then(response => response.json())
-                .then(notices => {
-                    let selectedDay = today.getDay();
-                    if (currentHour >= 15) {
-                        selectedDay = (selectedDay + 1) % 7; // 오후 3시가 지나면 내일 공지를 표시
-                    }
-
-                    const todayNotice = notices[days[selectedDay]] || "오늘은 공지가 없습니다.";
-                    document.getElementById("content").innerHTML = todayNotice.replace(/\n/g, "<br>");
-                    document.querySelector('meta[property="og:description"]').setAttribute("content", todayNotice.replace(/\n/g, " "));
-                })
-                .catch(error => {
-                    console.error('공지 사항을 불러오는 중 오류가 발생했습니다.', error);
-                    document.getElementById("content").innerHTML = "공지 사항을 불러오는 중 오류가 발생했습니다.";
-                });
+            const contentDiv = document.getElementById("content");
+            contentDiv.innerHTML = `
+                <h2>${noticeToday} 공지</h2>
+                <p>[1교시] 창체진로: ${notices[`${noticeToday}1`] || ''}</p>
+                <p>[4교시] 확통: ${notices[`${noticeToday}2`] || ''}</p>
+                <p>[6교시] 심영독: ${notices[`${noticeToday}3`] || ''}</p>
+            `;
         }
 
-        // 페이지 로드 시 공지 업데이트
-        window.onload = function() {
-            updateMainPage();
-        };
+        // 페이지 로드시 공지 사항 업데이트
+        window.onload = updateMainPage;
     </script>
 </body>
 </html>
