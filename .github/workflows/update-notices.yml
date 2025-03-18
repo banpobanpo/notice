@@ -25,4 +25,4 @@ jobs:
       run: |
         node update-notices.js  # 여기서 notices.json을 업데이트하는 코드 실행
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub Secrets에서 토큰을 참조
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}  # GitHub Secrets에서 토큰을 참조
