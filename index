@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일일 공지</title>
+
+    <!-- Open Graph 메타 태그 -->
+    <meta property="og:title" content="공지">
+    <meta property="og:description" content="공지 내용을 불러오는 중...">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourgithubpage.com">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            text-align: center;
+        }
+        #content {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            border: none;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        /* 팝업 스타일 */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            width: 80%;
+            max-width: 500px;
+        }
+        .popup input,
+        .popup textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+        .popup button {
+            background: #28a745;
+        }
+        .popup .close-btn {
+            background: #dc3545;
+        }
+        /* 배경 흐리게 처리 */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>📢 오늘의 공지</h1>
+    <div id="content">공지 내용을 불러오는 중...</div>
+
+    <button onclick="openAdminPanel()">관리자 모드</button>
+
+    <!-- 팝업 배경 (overlay) -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- 관리자 모드 팝업 -->
+    <div class="popup" id="adminPanel">
+        <h2>🔑 관리자 모드</h2>
+        <label for="password">비밀번호를 입력하세요:</label>
+        <input type="password" id="password">
+        <button onclick="checkPassword()">로그인</button>
+
+        <div id="adminContent" style="display: none;">
+            <h3>📢 공지 수정</h3>
+            <label>월요일</label>
+            <textarea id="mon"></textarea>
+
+            <label>화요일</label>
+            <textarea id="tue"></textarea>
+
+            <label>수요일</label>
+            <textarea id="wed"></textarea>
+
+            <label>목요일</label>
+            <textarea id="thu"></textarea>
+
+            <label>금요일</label>
+            <textarea id="fri"></textarea>
+
+            <button onclick="saveNotices()">저장</button>
+            <button class="close-btn" onclick="closeAdminPanel()">닫기</button>
+        </div>
+    </div>
+
+    <script>
+        const PASSWORD = "admin123"; // 비밀번호 설정 (배포 시 변경 필요)
+
+        function openAdminPanel() {
+            document.getElementById('overlay').style.display = 'block'; // 배경 흐리게 처리
+            document.getElementById('adminPanel').style.display = 'block'; // 팝업 창 표시
+        }
+
+        function closeAdminPanel() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'none';
+        }
+
+        function checkPassword() {
+            const input = document.getElementById("password").value;
+            if (input === PASSWORD) {
+                document.getElementById("adminContent").style.display = "block";
+                loadNotices();
+            } else {
+                alert("비밀번호가 틀렸습니다.");
+            }
+        }
+
+        function loadNotices() {
+            const notices = JSON.parse(localStorage.getItem("notices")) || {};
+            document.getElementById("mon").value = notices["월요일"] || "";
+            document.getElementById("tue").value = notices["화요일"] || "";
+            document.getElementById("wed").value = notices["수요일"] || "";
+            document.getElementById("thu").value = notices["목요일"] || "";
+            document.getElementById("fri").value = notices["금요일"] || "";
+        }
+
+        function saveNotices() {
+            const notices = {
+                "월요일": document.getElementById("mon").value,
+                "화요일": document.getElementById("tue").value,
+                "수요일": document.getElementById("wed").value,
+                "목요일": document.getElementById("thu").value,
+                "금요일": document.getElementById("fri").value
+            };
+            localStorage.setItem("notices", JSON.stringify(notices));
+            alert("공지 내용이 저장되었습니다.");
+            closeAdminPanel(); // 관리자 모드 종료
+            updateMainPage(); // 메인 페이지 업데이트
+        }
+
+        function updateMainPage() {
+            const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+            const today = new Date();
+            const todayStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()} (${days[today.getDay()]})`;
+
+            document.title = `[${todayStr} 공지]`;
+            document.querySelector('meta[property="og:title"]').setAttribute("content", `[${todayStr} 공지]`);
+
+            // 저장된 공지 불러오기
+            const notices = JSON.parse(localStorage.getItem("notices")) || {};
+            const todayNotice = notices[days[today.getDay()]] || "오늘은 공지가 없습니다.";
+            document.getElementById("content").innerHTML = todayNotice.replace(/\n/g, "<br>");
+            document.querySelector('meta[property="og:description"]').setAttribute("content", todayNotice.replace(/\n/g, " "));
+        }
+
+        // 초기 로드 시 메인 페이지 업데이트
+        updateMainPage();
+    </script>
+
+</body>
+</html>
